@@ -96,16 +96,16 @@ int main (int argc, char ** argv)
     computetime = 0.0;
     writetime = 0.0;
 
-    for(i = 0; i < nx_global/nx_local; i++)
-        for(j = 0; j < ny_global/(ny_local*size); j++)
+    for(i = 0; i < nx_global; i++)
+        for(j = 0; j < ny_global/(nx_local*ny_local*size); j++)
         {
-            offs_x = i * nx_local;
-            offs_y = j * ny_local * size + ny_local * rank;
+            offs_x = i ;
+            offs_y = j*nx_local*ny_local*size + nx_local*ny_local*rank;
 
             start[0] = offs_x;
             start[1] = offs_y;
-            count[0] = nx_local;
-            count[1] = ny_local;
+            count[0] = 1;
+            count[1] = nx_local*ny_local;
 
             sel = adios_selection_boundingbox(varinfo->ndim, start, count);
 
