@@ -1,16 +1,3 @@
-/* 
- * ADIOS is freely available under the terms of the BSD license described
- * in the COPYING file in the top level directory of this source distribution.
- *
- * Copyright (c) 2008 - 2009.  UT-BATTELLE, LLC. All rights reserved.
- */
-
-/*************************************************************/
-/*          Example of reading arrays in ADIOS               */
-/*    which were written from the same number of processors  */
-/*                                                           */
-/*        Similar example is manual/2_adios_read.c           */
-/*************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -18,7 +5,7 @@
 #include "mpi.h"
 #include "adios_read.h"
 
-float solvedeterminant(float a11, float a12, float a13,
+static inline float solvedeterminant(float a11, float a12, float a13,
                               float a21, float a22, float a23,
                               float a31, float a32, float a33)
 {
@@ -26,7 +13,7 @@ float solvedeterminant(float a11, float a12, float a13,
             - a13*a22*a31 - a11*a23*a32 - a12*a21*a33);
 }
 
-float interpolation(float *c)
+static inline float interpolation(float *c)
 {
     float x[9],y[3]={1,3,8},ret[3],d,i;
     x[0] = c[0] * c[0];
@@ -69,7 +56,7 @@ int main (int argc, char ** argv)
     MPI_Comm_rank (comm, &rank);
     MPI_Comm_size (comm, &size);
 
-    adios_read_init_method (method, comm, "verbose=3");
+    adios_read_init_method (method, comm, "num_aggregators=4");
 
     strcpy (filename, "raw.bp");
     ADIOS_FILE * f = adios_read_open (filename, method, comm, ADIOS_LOCKMODE_NONE, 0);
@@ -121,7 +108,7 @@ int main (int argc, char ** argv)
             for(ii = 0; ii < nx_local; ii ++)
                 for(jj = 0; jj < ny_local; jj++)
                 {
-                    int c[3];
+                    float c[3];
                     c[1] = data[ii];
                     c[2] = data[jj];
                     c[3] = data[ii * nx_local + jj];
